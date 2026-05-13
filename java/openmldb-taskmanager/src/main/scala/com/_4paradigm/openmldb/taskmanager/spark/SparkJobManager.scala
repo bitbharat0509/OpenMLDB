@@ -45,7 +45,7 @@ object SparkJobManager {
       launcher.setSparkHome(TaskManagerConfig.getSparkHome)
     }
 
-    val env: java.util.Map[String, String] = new java.util.HashMap[String, String]
+    val env: java.util.Map[String, String] = new java.util.HashMap[String, String](System.getenv())
     // config may empty, need check
     if (TaskManagerConfig.getHadoopConfDir != null && TaskManagerConfig.getHadoopConfDir.nonEmpty) {
       env.put("HADOOP_CONF_DIR", TaskManagerConfig.getHadoopConfDir)
