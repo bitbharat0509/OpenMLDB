@@ -37,22 +37,22 @@ object SparkJobManager {
    */
   def createSparkLauncher(mainClass: String): SparkLauncher = {
 
-    val launcher = new SparkLauncher()
+    val env = new java.util.HashMap[String, String]()
+
+    if (TaskManagerConfig.getHadoopConfDir != null && TaskManagerConfig.getHadoopConfDir.nonEmpty) {
+      env.put("HADOOP_CONF_DIR", TaskManagerConfig.getHadoopConfDir)
+    }
+
+    if (TaskManagerConfig.getHadoopUserName != null && TaskManagerConfig.getHadoopUserName.nonEmpty) {
+      env.put("HADOOP_USER_NAME", TaskManagerConfig.getHadoopUserName)
+    }
+
+    val launcher = new SparkLauncher(env)
       .setAppResource(TaskManagerConfig.getBatchjobJarPath)
       .setMainClass(mainClass)
 
     if (TaskManagerConfig.getSparkHome != null && TaskManagerConfig.getSparkHome.nonEmpty) {
       launcher.setSparkHome(TaskManagerConfig.getSparkHome)
-    }
-
-    val env: java.util.Map[String, String] = new java.util.HashMap[String, String](System.getenv())
-    // config may empty, need check
-    if (TaskManagerConfig.getHadoopConfDir != null && TaskManagerConfig.getHadoopConfDir.nonEmpty) {
-      env.put("HADOOP_CONF_DIR", TaskManagerConfig.getHadoopConfDir)
-    }
-
-    if (TaskManagerConfig.getHadoopUserName != null && TaskManagerConfig.getHadoopUserName.nonEmpty){
-      env.put("HADOOP_USER_NAME", TaskManagerConfig.getHadoopUserName)
     }
 
     if (TaskManagerConfig.getSparkMaster.startsWith("local")) {
